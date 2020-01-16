@@ -18,6 +18,8 @@ import copy
 import math
 import cubic_spline_planner
 
+SIM_LOOP = 500
+
 # Parameter
 MAX_SPEED = 50.0 / 3.6  # maximum speed [m/s]
 MAX_ACCEL = 2.0  # maximum acceleration [m/ss]
@@ -47,13 +49,6 @@ class quintic_polynomial:
     def __init__(self, xs, vxs, axs, xe, vxe, axe, T):
 
         # calc coefficient of quintic polynomial
-        self.xs = xs
-        self.vxs = vxs
-        self.axs = axs
-        self.xe = xe
-        self.vxe = vxe
-        self.axe = axe
-
         self.a0 = xs
         self.a1 = vxs
         self.a2 = axs / 2.0
@@ -97,12 +92,7 @@ class quartic_polynomial:
 
     def __init__(self, xs, vxs, axs, vxe, axe, T):
 
-        # calc coefficient of quintic polynomial
-        self.xs = xs
-        self.vxs = vxs
-        self.axs = axs
-        self.vxe = vxe
-        self.axe = axe
+        # calc coefficient of quartic polynomial
 
         self.a0 = xs
         self.a1 = vxs
@@ -182,7 +172,7 @@ def calc_frenet_paths(c_speed, c_d, c_d_d, c_d_dd, s0):
             fp.d_dd = [lat_qp.calc_second_derivative(t) for t in fp.t]
             fp.d_ddd = [lat_qp.calc_third_derivative(t) for t in fp.t]
 
-            # Loongitudinal motion planning (Velocity keeping)
+            # Longitudinal motion planning (Velocity keeping)
             for tv in np.arange(TARGET_SPEED - D_T_S * N_S_SAMPLE, TARGET_SPEED + D_T_S * N_S_SAMPLE, D_T_S):
                 tfp = copy.deepcopy(fp)
                 lon_qp = quartic_polynomial(s0, c_speed, 0.0, tv, 0.0, Ti)
@@ -228,7 +218,7 @@ def calc_global_paths(fplist, csp):
             dx = fp.x[i + 1] - fp.x[i]
             dy = fp.y[i + 1] - fp.y[i]
             fp.yaw.append(math.atan2(dy, dx))
-            fp.ds.append(math.sqrt(dx**2 + dy**2))
+            fp.ds.append(math.hypot(dx, dy))
 
         fp.yaw.append(fp.yaw[-1])
         fp.ds.append(fp.ds[-1])
@@ -257,7 +247,7 @@ def check_collision(fp, ob):
 def check_paths(fplist, ob):
 
     okind = []
-    for i in range(len(fplist)):
+    for i, _ in enumerate(fplist):
         if any([v > MAX_SPEED for v in fplist[i].s_d]):  # Max speed check
             continue
         elif any([abs(a) > MAX_ACCEL for a in fplist[i].s_dd]):  # Max accel check
@@ -329,7 +319,7 @@ def main():
 
     area = 20.0  # animation area length [m]
 
-    for i in range(500):
+    for i in range(SIM_LOOP):
         path = frenet_optimal_planning(
             csp, s0, c_speed, c_d, c_d_d, c_d_dd, ob)
 
@@ -343,8 +333,11 @@ def main():
             print("Goal")
             break
 
-        if show_animation:
+        if show_animation:  # pragma: no cover
             plt.cla()
+            # for stopping simulation with the esc key.
+            plt.gcf().canvas.mpl_connect('key_release_event',
+                    lambda event: [exit(0) if event.key == 'escape' else None])
             plt.plot(tx, ty)
             plt.plot(ob[:, 0], ob[:, 1], "xk")
             plt.plot(path.x[1:], path.y[1:], "-or")
@@ -356,7 +349,7 @@ def main():
             plt.pause(0.0001)
 
     print("Finish")
-    if show_animation:
+    if show_animation:  # pragma: no cover
         plt.grid(True)
         plt.pause(0.0001)
         plt.show()

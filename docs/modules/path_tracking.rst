@@ -90,23 +90,18 @@ Ref:
    Conference
    Publication <http://ieeexplore.ieee.org/document/5940562/>`__
 
-Model predictive speed and steering control
--------------------------------------------
-
-Path tracking simulation with iterative linear model predictive speed
-and steering control.
-
-.. raw:: html
-
-   <img src="https://github.com/AtsushiSakai/PythonRobotics/raw/master/PathTracking/model_predictive_speed_and_steer_control/animation.gif" width="640">
+.. include:: Model_predictive_speed_and_steering_control.rst
 
 Ref:
 
--  `notebook <https://github.com/AtsushiSakai/PythonRobotics/blob/master/PathTracking/model_predictive_speed_and_steer_control/notebook.ipynb>`__
+-  `notebook <https://github.com/AtsushiSakai/PythonRobotics/blob/master/PathTracking/model_predictive_speed_and_steer_control/model_predictive_speed_and_steer_control.ipynb>`__
 
-.. |2| image:: https://github.com/AtsushiSakai/PythonRobotics/raw/master/PathTracking/move_to_pose/animation.gif
-.. |3| image:: https://github.com/AtsushiSakai/PythonRobotics/raw/master/PathTracking/pure_pursuit/animation.gif
-.. |4| image:: https://github.com/AtsushiSakai/PythonRobotics/raw/master/PathTracking/stanley_controller/animation.gif
-.. |5| image:: https://github.com/AtsushiSakai/PythonRobotics/raw/master/PathTracking/rear_wheel_feedback/animation.gif
-.. |6| image:: https://github.com/AtsushiSakai/PythonRobotics/raw/master/PathTracking/lqr_steer_control/animation.gif
-.. |7| image:: https://github.com/AtsushiSakai/PythonRobotics/raw/master/PathTracking/lqr_speed_steer_control/animation.gif
+
+.. include:: cgmres_nmpc.rst
+
+.. |2| image:: https://github.com/AtsushiSakai/PythonRoboticsGifs/raw/master/PathTracking/move_to_pose/animation.gif
+.. |3| image:: https://github.com/AtsushiSakai/PythonRoboticsGifs/raw/master/PathTracking/pure_pursuit/animation.gif
+.. |4| image:: https://github.com/AtsushiSakai/PythonRoboticsGifs/raw/master/PathTracking/stanley_controller/animation.gif
+.. |5| image:: https://github.com/AtsushiSakai/PythonRoboticsGifs/raw/master/PathTracking/rear_wheel_feedback/animation.gif
+.. |6| image:: https://github.com/AtsushiSakai/PythonRoboticsGifs/raw/master/PathTracking/lqr_steer_control/animation.gif
+.. |7| image:: https://github.com/AtsushiSakai/PythonRoboticsGifs/raw/master/PathTracking/lqr_speed_steer_control/animation.gif

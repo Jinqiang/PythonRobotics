@@ -5,10 +5,10 @@ Reeds Shepp path planner sample code
 author Atsushi Sakai(@Atsushi_twi)
 
 """
-import numpy as np
 import math
-import matplotlib.pyplot as plt
 
+import matplotlib.pyplot as plt
+import numpy as np
 
 show_animation = True
 
@@ -285,12 +285,6 @@ def generate_local_course(L, lengths, mode, maxc, step_size):
     else:
         directions[0] = -1
 
-    if lengths[0] > 0.0:
-        d = step_size
-    else:
-        d = -step_size
-
-    pd = d
     ll = 0.0
 
     for (m, l, i) in zip(mode, lengths, range(len(mode))):
@@ -331,7 +325,7 @@ def generate_local_course(L, lengths, mode, maxc, step_size):
 
 
 def pi_2_pi(angle):
-    return (angle + math.pi) % (2*math.pi) - math.pi
+    return (angle + math.pi) % (2 * math.pi) - math.pi
 
 
 def calc_paths(sx, sy, syaw, gx, gy, gyaw, maxc, step_size):
@@ -359,18 +353,18 @@ def calc_paths(sx, sy, syaw, gx, gy, gyaw, maxc, step_size):
 
 
 def reeds_shepp_path_planning(sx, sy, syaw,
-                              gx, gy, gyaw, maxc, step_size):
+                              gx, gy, gyaw, maxc, step_size=0.2):
 
     paths = calc_paths(sx, sy, syaw, gx, gy, gyaw, maxc, step_size)
 
-    if len(paths) == 0:
+    if not paths:
         #  print("No path")
         #  print(sx, sy, syaw, gx, gy, gyaw)
         return None, None, None, None, None
 
     minL = float("Inf")
     best_path_index = -1
-    for i in range(len(paths)):
+    for i, _ in enumerate(paths):
         if paths[i].L <= minL:
             minL = paths[i].L
             best_path_index = i
@@ -387,11 +381,11 @@ def test():
     for i in range(NTEST):
         start_x = (np.random.rand() - 0.5) * 10.0  # [m]
         start_y = (np.random.rand() - 0.5) * 10.0  # [m]
-        start_yaw = math.radians((np.random.rand() - 0.5) * 180.0)  # [rad]
+        start_yaw = np.deg2rad((np.random.rand() - 0.5) * 180.0)  # [rad]
 
         end_x = (np.random.rand() - 0.5) * 10.0  # [m]
         end_y = (np.random.rand() - 0.5) * 10.0  # [m]
-        end_yaw = math.radians((np.random.rand() - 0.5) * 180.0)  # [rad]
+        end_yaw = np.deg2rad((np.random.rand() - 0.5) * 180.0)  # [rad]
 
         curvature = 1.0 / (np.random.rand() * 20.0)
         step_size = 0.1
@@ -399,8 +393,11 @@ def test():
         px, py, pyaw, mode, clen = reeds_shepp_path_planning(
             start_x, start_y, start_yaw, end_x, end_y, end_yaw, curvature, step_size)
 
-        if show_animation:
+        if show_animation:  # pragma: no cover
             plt.cla()
+            # for stopping simulation with the esc key.
+            plt.gcf().canvas.mpl_connect('key_release_event',
+                    lambda event: [exit(0) if event.key == 'escape' else None])
             plt.plot(px, py, label="final course " + str(mode))
 
             #  plotting
@@ -424,11 +421,11 @@ def main():
 
     start_x = -1.0  # [m]
     start_y = -4.0  # [m]
-    start_yaw = math.radians(-20.0)  # [rad]
+    start_yaw = np.deg2rad(-20.0)  # [rad]
 
     end_x = 5.0  # [m]
     end_y = 5.0  # [m]
-    end_yaw = math.radians(25.0)  # [rad]
+    end_yaw = np.deg2rad(25.0)  # [rad]
 
     curvature = 1.0
     step_size = 0.1
@@ -436,7 +433,7 @@ def main():
     px, py, pyaw, mode, clen = reeds_shepp_path_planning(
         start_x, start_y, start_yaw, end_x, end_y, end_yaw, curvature, step_size)
 
-    if show_animation:
+    if show_animation:  # pragma: no cover
         plt.cla()
         plt.plot(px, py, label="final course " + str(mode))
 

@@ -5,12 +5,16 @@ Path tracking simulation with rear wheel feedback steering control and PID speed
 author: Atsushi Sakai(@Atsushi_twi)
 
 """
+import matplotlib.pyplot as plt
+import math
+import numpy as np
 import sys
 sys.path.append("../../PathPlanning/CubicSpline/")
 
-import math
-import matplotlib.pyplot as plt
-import cubic_spline_planner
+try:
+    import cubic_spline_planner
+except:
+    raise
 
 
 Kp = 1.0  # speed propotional gain
@@ -132,7 +136,7 @@ def closed_loop_prediction(cx, cy, cyaw, ck, speed_profile, goal):
         # check goal
         dx = state.x - goal[0]
         dy = state.y - goal[1]
-        if math.sqrt(dx ** 2 + dy ** 2) <= goal_dis:
+        if math.hypot(dx, dy) <= goal_dis:
             print("Goal")
             goal_flag = True
             break
@@ -145,6 +149,9 @@ def closed_loop_prediction(cx, cy, cyaw, ck, speed_profile, goal):
 
         if target_ind % 1 == 0 and show_animation:
             plt.cla()
+            # for stopping simulation with the esc key.
+            plt.gcf().canvas.mpl_connect('key_release_event',
+                    lambda event: [exit(0) if event.key == 'escape' else None])
             plt.plot(cx, cy, "-r", label="course")
             plt.plot(x, y, "ob", label="trajectory")
             plt.plot(cx[target_ind], cy[target_ind], "xg", label="target")
@@ -181,10 +188,6 @@ def calc_speed_profile(cx, cy, cyaw, target_speed):
 
     speed_profile[-1] = 0.0
 
-    #  flg, ax = plt.subplots(1)
-    #  plt.plot(speed_profile, "-r")
-    #  plt.show()
-
     return speed_profile
 
 
@@ -206,9 +209,9 @@ def main():
     # Test
     assert goal_flag, "Cannot goal"
 
-    if show_animation:
+    if show_animation:  # pragma: no cover
         plt.close()
-        flg, _ = plt.subplots(1)
+        plt.subplots(1)
         plt.plot(ax, ay, "xb", label="input")
         plt.plot(cx, cy, "-r", label="spline")
         plt.plot(x, y, "-g", label="tracking")
@@ -218,14 +221,14 @@ def main():
         plt.ylabel("y[m]")
         plt.legend()
 
-        flg, ax = plt.subplots(1)
-        plt.plot(s, [math.degrees(iyaw) for iyaw in cyaw], "-r", label="yaw")
+        plt.subplots(1)
+        plt.plot(s, [np.rad2deg(iyaw) for iyaw in cyaw], "-r", label="yaw")
         plt.grid(True)
         plt.legend()
         plt.xlabel("line length[m]")
         plt.ylabel("yaw angle[deg]")
 
-        flg, ax = plt.subplots(1)
+        plt.subplots(1)
         plt.plot(s, ck, "-r", label="curvature")
         plt.grid(True)
         plt.legend()
